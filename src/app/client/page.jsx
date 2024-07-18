@@ -1,9 +1,7 @@
-import Navbar from "@/components/navbar/navbar";
+'use client'
 
-export default function Page() {
-    return (
-        <div>
-            <Navbar></Navbar>
-        </div>
-    );
+export default function PageHome() {
+    return(
+        <h1>Trang chủ</h1>
+    )
 }

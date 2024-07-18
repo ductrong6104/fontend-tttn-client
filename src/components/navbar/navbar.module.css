@@ -1,7 +1,8 @@
 /* styles/Navbar.module.css */
 .navbar {
-    background-color: white;
+  background-color: #f0f0f0;
     padding: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   }
   
   .navList {
@@ -37,10 +38,10 @@
     padding: 10px;
     position: fixed;
     top: 50px; /* Định vị từ phía trên */
-    left: 50%; /* Định vị từ phía trái */
+ /* Định vị từ phía trái */
     transform: translateX(-50%); /* Căn giữa theo chiều ngang */
-    width: 400px; /* Chiều rộng submenu */
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    width: auto; /* Chiều rộng submenu */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   }
   .submenu ul:first-child {
     list-style: none;
