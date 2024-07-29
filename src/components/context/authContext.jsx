@@ -8,10 +8,11 @@ const AuthContext = createContext();
 export function AuthProvider({ children }) {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-    const login = (username, accountId) => {
+    const login = (username, accountId, clientId) => {
         const accountSession = AccountSession.getInstance();
         accountSession.setUsername(username);
         accountSession.setAccountId(accountId);
+        accountSession.setClientId(clientId)
         setIsLoggedIn(true);
     };
 

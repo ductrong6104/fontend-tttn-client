@@ -12,9 +12,9 @@ export const createClient = async (newClient) => {
 }
 
 // debounce không nên được sử dụng trực tiếp trên hàm async khi export ra vì nó có thể gây ra lỗi khi sử dụng.
-export const checkEmailExists = async (email) => {
+export const checkEmailExists = async (updateEmailRequest) => {
     try {
-      const response = await api.get(`/clients/check-email?email=${email}`);
+      const response = await api.post(`/clients/check-email`, updateEmailRequest);
       return response.data;
     } catch (error) {
       console.error('Error checking email:', error);
@@ -35,6 +35,26 @@ export const checkPhoneExists = async (phone) => {
 export const checkIdentityCardExists = async (identityCard) => {
     try {
       const response = await api.get(`/clients/check-identityCard?identityCard=${identityCard}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error checking identityCard:', error);
+      throw error;
+    }
+  } 
+
+  export const updateEmailClient = async (clientId, email) => {
+    try {
+      const response = await api.put(`/clients/${clientId}/email`, email);
+      return response.data;
+    } catch (error) {
+      console.error('Error checking identityCard:', error);
+      throw error;
+    }
+  } 
+
+  export const getClientById = async (clientId) => {
+    try {
+      const response = await api.get(`/clients/${clientId}`);
       return response.data;
     } catch (error) {
       console.error('Error checking identityCard:', error);

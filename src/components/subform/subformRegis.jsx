@@ -62,7 +62,8 @@ const SubformRegis = ({ isOpen, onClose, openSubformLogin }) => {
           setEmailError('Email không hợp lệ, ví dụ: trong@gmail.com');
           return;
         }
-        const res = await checkEmailExists(email);
+        const UpdateEmailRequest = {"email": email};
+        const res = await checkEmailExists(UpdateEmailRequest);
         if (res.status === 200){
           console.log(res.data.exists);
           setEmailExists(res.data.exists);
@@ -273,6 +274,7 @@ const SubformRegis = ({ isOpen, onClose, openSubformLogin }) => {
             placeholder="ví dụ: 0962522522"
             ref={phoneInputRef}
             required
+            className="w-full"
           ></InputCustome>
           {checkingPhone && <span>{checkingPhone}</span>}
           {phoneError && <span className={`${phoneExists ? "text-red-500" : "text-green-500"}`}>{phoneError}</span>}
@@ -285,6 +287,8 @@ const SubformRegis = ({ isOpen, onClose, openSubformLogin }) => {
               name="firstName"
               value={formData.firstName}
               onChange={handleChange}
+              className="w-full"
+              required
             ></InputCustome>
           </div>
           <div className="flex justify-between mb-2 items-center">
@@ -294,6 +298,8 @@ const SubformRegis = ({ isOpen, onClose, openSubformLogin }) => {
               name="lastName"
               value={formData.lastName}
               onChange={handleChange}
+              className="w-full"
+              required
             ></InputCustome>
           </div>
         </div>
@@ -307,6 +313,7 @@ const SubformRegis = ({ isOpen, onClose, openSubformLogin }) => {
             placeholder="ví dụ: 052226217914"
             ref={identityCardInputRef}
             required
+            className="w-full"
           ></InputCustome>
           {checkingIdentityCard && <span>Checking...</span>}
           { identityCardError && <span className={`${identityCardExists ? "text-red-500" : "text-green-500"}`}>{identityCardError}</span>}
@@ -321,6 +328,7 @@ const SubformRegis = ({ isOpen, onClose, openSubformLogin }) => {
             placeholder="ví dụ: trong@gmail.com"
             ref={emailInputRef}
             required
+            className="w-full"
           ></InputCustome>
           {checkingEmail && <span>Checking...</span>}
           { emailError && <span className={`${emailExists ? "text-red-500" : "text-green-500"}`}>{emailError}</span>}
@@ -334,6 +342,7 @@ const SubformRegis = ({ isOpen, onClose, openSubformLogin }) => {
             value={formData.username}
             onChange={handleChange}
             required
+            className="w-full"
           ></InputCustome>
         </div>
         <div className="mb-2">
@@ -347,6 +356,7 @@ const SubformRegis = ({ isOpen, onClose, openSubformLogin }) => {
                 onChange={handleChange}
                 placeholder={showPassword ? "Mật khẩu" : "********"}
                 required
+                className="w-full"
             ></InputCustome>
             <FaEyeSlash className={`cursor-pointer absolute end-0 mr-8 mt-3 ${showPassword ? "invisible" : "visible"}`} onClick={() => setShowPassword(true)}></FaEyeSlash>
             <LiaEyeSolid className={`cursor-pointer absolute end-0 mr-8 mt-3 ${showPassword ? "visible" : "invisible"}`} onClick={() => setShowPassword(false)}></LiaEyeSolid>
@@ -362,6 +372,7 @@ const SubformRegis = ({ isOpen, onClose, openSubformLogin }) => {
                 onChange={handleChangePasswordAgain}
                 placeholder={showPasswordAgain ? "Nhập lại mật khẩu" : "********"}
                 required
+                className="w-full"
             ></InputCustome>
             <FaEyeSlash className={`cursor-pointer absolute end-0 mr-8 mt-3 ${showPasswordAgain ? "invisible" : "visible"}`} onClick={() => setShowPasswordAgain(true)}></FaEyeSlash>
             <LiaEyeSolid className={`cursor-pointer absolute end-0 mr-8 mt-3 ${showPasswordAgain ? "visible" : "invisible"}`} onClick={() => setShowPasswordAgain(false)}></LiaEyeSolid>

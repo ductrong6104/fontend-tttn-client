@@ -12,6 +12,8 @@ import { customStyles } from "./customStyles";
 import { sigin } from "@/modules/accounts/service";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../context/authContext";
+import { notifySuccess, notifyError } from "../toastify/toastify";
+
 const SubformLogin = ({ isOpen, onClose, openSubformLogin, setSelectedNav }) => {
   const [formData, setFormData] = useState({
       "username": "",
@@ -40,19 +42,19 @@ const SubformLogin = ({ isOpen, onClose, openSubformLogin, setSelectedNav }) => 
   
     sigin(formData).then((res) => {
       if (res.status === 200) {
-        alert("Đăng nhập thành công");
-        login(res.data.username, res.data.accountId);
+        notifySuccess('Đăng nhập thành công');
+        login(res.data.username, res.data.accountId, res.data.clientId);
         setSelectedNav(false);
         onClose(); // Đóng modal sau khi submit thành công
       }
       else if (res.status === 701){
-        alert("Tài khoản chưa được đăng ký");
+        notifyError("Tài khoản chưa được đăng ký");
       }
       else if (res.status === 702){
-        alert("Mật khẩu sai");
+        notifyError("Mật khẩu sai");
       }
       else if (res.status === 703){
-        alert("Tài khoản này không dành cho khách hàng");
+        notifyError("Tài khoản này không dành cho khách hàng");
       }
     });
     
@@ -99,6 +101,7 @@ const SubformLogin = ({ isOpen, onClose, openSubformLogin, setSelectedNav }) => 
             type="text"
             name="username"
             value={formData.username}
+            className="w-full"
             onChange={handleChange}
             required
           ></InputCustome>
@@ -112,6 +115,7 @@ const SubformLogin = ({ isOpen, onClose, openSubformLogin, setSelectedNav }) => 
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
+                className="w-full"
                 placeholder={showPassword ? "Mật khẩu" : "********"}
                 required
             ></InputCustome>

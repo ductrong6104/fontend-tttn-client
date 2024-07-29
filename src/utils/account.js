@@ -1,7 +1,9 @@
+
 class AccountSession {
   constructor() {
     this.accountId = null;
     this.username = null;
+    this.clientId = null;
   }
 
   static getInstance() {
@@ -25,9 +27,17 @@ class AccountSession {
     return this.username;
   }
 
+  setClientId(clientId) { 
+    this.clientId = clientId;
+  }
+  getClientId() {
+    return this.clientId;
+  }
+
   clearSession() {
     this.accountId = null;
     this.username = null;
+    this.clientId = null;
   }
 }
 
