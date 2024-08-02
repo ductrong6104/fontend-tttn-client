@@ -37,6 +37,7 @@
     background-color: #f0f0f0;
     padding: 10px;
     position: fixed;
+    z-index: 100;
     top: 50px; /* Định vị từ phía trên */
  /* Định vị từ phía trái */
     transform: translateX(-50%); /* Căn giữa theo chiều ngang */

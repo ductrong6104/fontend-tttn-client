@@ -24,3 +24,21 @@ export const getBillToGeneratePdf = async (billId, clientId) => {
         console.log(err);
     }
 }
+
+export const getUnpaidInvoicesByClientId = async (clientId) => {
+    try{
+        const res = await api.get(`/bills/unpaid-invoice-client/${clientId}`);
+        return res.data;
+    }catch(err){
+        console.log(err);
+    }
+}
+
+export const getAllInvoicesByClientId = async (clientId) => {
+    try{
+        const res = await api.get(`/bills/all-invoice-client/${clientId}`);
+        return res.data;
+    }catch(err){
+        console.log(err);
+    }
+}

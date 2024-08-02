@@ -6,6 +6,7 @@ export const customStyles = {
       right: "auto",
       bottom: "auto",
       width: "380px",
+      // height: "600px",
       height: "auto",
       overflowY: "auto",
       marginRight: "-50%",

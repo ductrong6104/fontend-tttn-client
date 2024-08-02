@@ -123,13 +123,13 @@ const SubformLogin = ({ isOpen, onClose, openSubformLogin, setSelectedNav }) => 
             <LiaEyeSolid className={`cursor-pointer absolute end-0 mr-8 mt-3 ${showPassword ? "visible" : "invisible"}`} onClick={() => setShowPassword(false)}></LiaEyeSolid>
           </div>
         </div>
-        <div className="flex justify-between mb-6">
+        {/* <div className="flex justify-between mb-6">
             <label htmlFor="checkbox">
                 <input type="checkbox" checked={isCheckedSavePass} onChange={handleCheckedSavePass} />
                 Lưu mật khẩu
             </label>
             <div className="text-blue-600 cursor-pointer">Quên mật khẩu</div>
-        </div>
+        </div> */}
         
         {/* Thêm các trường khác của subform */}
         <div className="flex justify-end mb-4">

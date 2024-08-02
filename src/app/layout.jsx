@@ -26,7 +26,7 @@ export default function RootLayout({ children }) {
             
               <HeaderPage></HeaderPage>
               
-              <div className="container mx-auto px-36 bg-white h-screen">
+              <div className="container mx-auto px-36 bg-white">
               {children}
               </div>
               </FormProvider>

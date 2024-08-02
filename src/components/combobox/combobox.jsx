@@ -1,7 +1,7 @@
 // components/ComboBox.js
 import React, { useState } from 'react';
 
-const ComboBox = ({ options, onSelect, className }) => {
+const ComboBox = ({ options, onSelect, className, required = true }) => {
   const [selectedOption, setSelectedOption] = useState('');
 
   const handleChange = (event) => {
@@ -14,7 +14,7 @@ const ComboBox = ({ options, onSelect, className }) => {
 
   return (
     <div className="">
-      <select value={selectedOption} onChange={handleChange} className={className} required>
+      <select value={selectedOption} onChange={handleChange} className={className} required={required}>
         <option value="" disabled>
           Select an option
         </option>

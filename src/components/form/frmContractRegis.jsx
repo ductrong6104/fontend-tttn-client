@@ -10,7 +10,7 @@ import { getClientById } from "@/modules/clients/service";
 import ComboBox from "../combobox/combobox";
 import { getAllElectricTypes } from "@/modules/electricTypes/service";
 import { format } from 'date-fns';
-import { checkContractExists, createContract } from "@/modules/contracts/service";
+import { cancelRegisterByClientId, checkContractExists, createContract, getContractStatusByClientId, terminateContract } from "@/modules/contracts/service";
 import { useRouter } from "next/navigation";
 import { notifyError, notifySuccess } from "../toastify/toastify";
 export default function FrmContractRegis() {
@@ -33,6 +33,13 @@ export default function FrmContractRegis() {
   const [contractExists, setContractExists] = useState(false);
   const [isReadOnly, setIsReadOnly] = useState(true);
   const [regisSuccess, setRegisSuccess] = useState(false);
+  const [textButton, setTextButton] = useState(null);
+  const [reload, setReload] = useState(false);
+  const [contractStatus, setContractStatus] = useState({
+    "contractId": "",
+    "statusId": "",
+    "nameStatus": ""
+  })
   const handleSelect = (value) => {
     console.log("Selected value:", value);
     setFormData((prevFormData) => ({
@@ -77,9 +84,28 @@ export default function FrmContractRegis() {
         setIsReadOnly(res.data.exists);
       }
     })
-  }, [accountSession.getClientId()]);
+  }, [accountSession.getClientId(), reload]);
+  useEffect(()=>{
+    getContractStatusByClientId(accountSession.getClientId()).then((res)=>{
+      if (res.status ===200){
+        console.log(res.data);
+        setContractStatus(res.data);
+      }
+    })
+  }, [accountSession.getClientId(), reload])
+  if (contractStatus != null){
 
-
+    useEffect(()=>{
+      
+        if (contractStatus.statusId === 1){
+          setTextButton("Hủy yêu cầu");
+        } else if (contractStatus.statusId === 3 || contractStatus.statusId === 4){
+          setTextButton("Đăng ký");
+        } else if (contractStatus.statusId === 5){
+          setTextButton("Kết thúc hợp đồng");
+        } 
+    }, [contractStatus])
+}
   // Hàm để lấy ngày hiện tại
 const getCurrentDate = () => {
   return new Date();
@@ -104,7 +130,6 @@ const formatDateForDatabase = (date) => {
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    alert(JSON.stringify(formData));
     const newContract = {
       clientId: formData.clientId,
       electricTypeId: formData.electricTypeId,
@@ -112,21 +137,57 @@ const formatDateForDatabase = (date) => {
       startDate: formData.startDate
     }
     console.log(newContract);
-    createContract(newContract).then((res) => {
-      if (res.status = 200){
-        notifySuccess("Gửi yêu cầu đăng ký hợp đồng thành công, chờ xác nhận");
-        setRegisSuccess(true);
-      }
-      else{
-        notifyError("Đăng ký hợp đồng thất bại")
-      }
-    })
+    console.log(`Contract status: ${contractStatus == null}`);
+    if (contractExists== false){
+      createContract(newContract).then((res) => {
+        if (res.status = 200){
+          notifySuccess("Gửi yêu cầu đăng ký hợp đồng thành công, chờ xác nhận");
+          setRegisSuccess(true);
+        }
+        else{
+          notifyError("Đăng ký hợp đồng thất bại")
+        }
+      })
+      return;
+    }
+      if (textButton == "Hủy yêu cầu"){
+        cancelRegisterByClientId(accountSession.getClientId()).then((res) => {
+          if (res.status = 200){
+            notifySuccess("Hủy đăng ký thành công");
+            setReload(!reload);
+    
+          }
+          else{
+            notifyError("Hủy đăng ký thất bại")
+          }
+        })
+      } 
+       else if (textButton == "Kết thúc hợp đồng"){
+        // setTextButton("Kết thúc hợp đồng");
+      } 
+    else 
+      
+    {
+      createContract(newContract).then((res) => {
+        if (res.status = 200){
+          notifySuccess("Gửi yêu cầu đăng ký hợp đồng thành công, chờ xác nhận");
+          setRegisSuccess(true);
+        }
+        else{
+          notifyError("Đăng ký hợp đồng thất bại")
+        }
+      })
+    }
+    
+    
   };
 
   if (regisSuccess)
     return (
       <h1>Chờ xác nhận đăng ký hợp đồng từ công ty</h1>
       ) 
+      
+
   return (
     <div className="border-2 w-screen p-2 pl-8 pr-8">
       <div className="flex justify-between items-center">
@@ -271,16 +332,36 @@ const formatDateForDatabase = (date) => {
               options={electricTypes}
               onSelect={handleSelect}
               className="border-2 w-full rounded-md p-2 bg-white"
+              required={contractStatus?.statusId != 1}
             />
           </div>
           <div className="w-1/2 ml-4"></div>
         </div>
-        <div className="flex justify-end items-center">
-          <ButtonCustome className="bg-gray-400 text-white" type="submit">
-            {contractExists ? 'Cập nhật': 'Đăng ký'}
+        {contractStatus != null ? (
+  <div className="flex flex-row justify-between mb-4">
+    <div className="w-1/2">
+      <div className="flex items-center">
+        <IoPersonOutline className="text-red-500 mr-2" />
+        <label htmlFor="" className="text-black font-bold">
+          Trạng thái hợp đồng
+        </label>
+      </div>
+      <div className="border-2 p-2 rounded-md">{ contractExists === true ? contractStatus.nameStatus : 'Chưa đăng ký hợp đồng nào'}</div>
+    </div>
+  </div>
+) : null}
+        
+        
+  
+          <div className="flex justify-end items-center">
+            <ButtonCustome className="bg-gray-400 text-white" type="submit">
+            {contractExists === true ? textButton : 'Đăng ký'}
           </ButtonCustome>
           <FaAngleRight className="absolute text-white" />
-        </div>
+            </div>
+      
+          
+      
       </form>
     </div>
   );

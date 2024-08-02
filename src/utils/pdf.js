@@ -92,3 +92,125 @@ export const GeneratePDF = async (formData) => {
         console.error('Lỗi khi tạo QR Code:', error);
     }
 };
+
+export const GeneratePDFBilPayment = async (formData) => {
+    const colors = {
+        black: [0, 0, 0],
+        white: [255, 255, 255],
+        red: [255, 0, 0],
+        green: [0, 255, 0],
+        blue: [0, 0, 255],
+        yellow: [255, 255, 0],
+        orange: [255, 165, 0],
+        purple: [128, 0, 128],
+        gray: [128, 128, 128],
+        pink: [255, 192, 203]
+      };
+    const doc = new jsPDF();
+    const x_inforPayment = 150;
+    const x_startHeader = 40;
+    doc.addFileToVFS("Roboto-Regular.ttf", base64_roboto);
+    doc.addFont("Roboto-Regular.ttf", "roboto", "normal");
+    doc.setFont("roboto");
+
+    // Tiêu đề
+    doc.setFontSize(16);
+    
+    const text = 'TỔNG CÔNG TY ĐIỆN LỰC MIỀN TRUNG THÀNH PHỐ HỒ CHÍ MINH TNHH - CÔNG TY ĐIỆN LỰC SÀI GÒN';
+
+// Kích thước tối đa của dòng trong tài liệu PDF
+const maxWidth = 180; // Điều chỉnh kích thước tùy theo trang của bạn
+
+// Chia văn bản thành nhiều dòng dựa trên kích thước tối đa
+const textLines = doc.splitTextToSize(text, maxWidth);
+doc.setTextColor(...colors.red); 
+// Thêm văn bản vào PDF
+textLines.forEach((line, index) => {
+  doc.text(line, x_startHeader, 10 + (index * 10)); // Điều chỉnh khoảng cách giữa các dòng
+});
+doc.setTextColor(...colors.black);
+const y_header_change = 10;
+    doc.setFontSize(10);
+    doc.text('Mã số thuế (Tax Code): 030095119-001', x_startHeader, 15+y_header_change);
+    doc.text('35 Phan Đình Phùng, P. Hải Châu 1, Q. Hải Châu, TP Đà Nẵng', x_startHeader, 20+y_header_change);
+    doc.text('Điện lực Thanh Khê', x_startHeader, 25+y_header_change);
+    doc.text('141 Lý Thái Tông - TP Đà Nẵng', x_startHeader, 30+y_header_change);
+
+    // Thông tin khách hàng
+    doc.setFontSize(12);
+    // doc.setTextColor(0, 0, 255); // Màu xanh dương (RGB)
+    // Thiết lập màu văn bản thành đỏ
+    doc.setTextColor(...colors.red); // RGB: Đỏ
+    doc.text('HÓA ĐƠN GIÁ TRỊ GIA TĂNG', 105, 40 + y_header_change, null, null, 'center');
+    doc.setTextColor(...colors.black);
+    doc.setFontSize(10);
+    doc.text('Họ tên người mua hàng: ' , 10, 50+ y_header_change);
+    doc.text('Địa chỉ: ' , 10, 55+ y_header_change);
+    doc.text('Số tài khoản(Account No+ y_header_change):', 10, 60+ y_header_change);
+    doc.text('Hình thức thanh toán (Payment method+ y_header_change): TM/CK', 10, 65+ y_header_change);
+    doc.text('Mã số thuế: ', 10, 70+ y_header_change);
+    doc.text('Địa chỉ sử dụng điện: ' , 10, 75+ y_header_change);
+    doc.text('Mục đích sử dụng điện: ' , 10, 80+ y_header_change);
+    doc.text('Số hộ dùng điện: 1', 10, 85+ y_header_change);
+
+    // Thông tin thanh toán
+    doc.setTextColor(255, 255, 255);
+    doc.setFillColor(0, 0, 255+ y_header_change); // Màu nền (xanh dương+ y_header_change)
+    doc.rect(x_inforPayment - 5, 45 + y_header_change, 40, 13, 'F'); // Vẽ hình chữ nhật có màu nền
+    doc.text('Mã khách hàng', x_inforPayment, 50+ y_header_change);
+    doc.text('', x_inforPayment, 55+ y_header_change);
+    doc.setFillColor(0, 0, 255+ y_header_change);
+
+    doc.rect(x_inforPayment - 5, 60 + y_header_change, 40, 13, 'F'); 
+    doc.text('Số tiền thanh toán', x_inforPayment, 65+ y_header_change);
+    doc.text('', x_inforPayment, 70+ y_header_change);
+    doc.setFillColor(0, 0, 255);
+    doc.rect(x_inforPayment - 5, 75 + y_header_change, 40, 13, 'F'); 
+    doc.text('Hạn thanh toán', x_inforPayment, 80+ y_header_change);
+    doc.text('', x_inforPayment, 85+ y_header_change);
+
+    
+    // Tình hình sử dụng điện
+    doc.setTextColor(0, 0, 0);
+    doc.text('TÌNH HÌNH SỬ DỤNG ĐIỆN CỦA KHÁCH HÀNG', 10, 95 + y_header_change);
+
+    autoTable(doc, {
+        startY: 100,
+        head: [['Kỳ hóa đơn', 'Chỉ số cũ', 'Chỉ số mới', 'Số điện tiêu thụ']],
+        body: [
+            [1,2,3,4]
+        ],
+        styles: {
+            font: "roboto",  // Đảm bảo sử dụng font đã tích hợp
+            cellPadding: 5,
+            fontSize: 12
+        }
+    });
+
+    
+
+    // Thông tin khác
+    doc.text('THANH TOÁN TRỰC TUYẾN', 10, 200);
+    doc.text('Để thanh toán trực tuyến, vui lòng truy cập:', 10, 205 );
+    doc.text('https://cskh.cpc.vn', 10, 210);
+    doc.text('và nhập mã khách hàng hoặc quét mã QR Code để thanh toán.', 10, 215);
+
+    // Tạo QR Code
+    try {
+        const qrCodeURL = await QRCode.toDataURL('https://cskh.cpc.vn');
+        
+        // Thêm QR Code vào PDF
+        const qrCodeImage = new Image();
+        qrCodeImage.src = qrCodeURL;
+        qrCodeImage.onload = function () {
+            doc.addImage(qrCodeImage, 'PNG', 10, 225, 50, 50); // Thay đổi tọa độ và kích thước tùy ý
+
+            // Lưu file PDF
+            doc.save('invoice.pdf');
+        };
+    } catch (error) {
+        console.error('Lỗi khi tạo QR Code:', error);
+    }
+};
+
+

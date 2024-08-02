@@ -17,3 +17,33 @@ export const createContract = async (newContract) => {
       throw error;
     }
   } 
+
+export const getContractStatusByClientId = async (clientId) => {
+    try {
+      const response = await api.get(`/contracts/client/${clientId}/status`);
+      return response.data;
+    } catch (error) {
+      console.error('Error checking check contract:', error);
+      throw error;
+    }
+  }
+
+  export const terminateContract = async (contractId) => {
+    try {
+      const response = await api.put(`/contracts/${contractId}/terminate`);
+      return response.data;
+    } catch (error) {
+      console.error('Error checking check contract:', error);
+      throw error;
+    }
+  }
+
+  export const cancelRegisterByClientId = async (clientId) => {
+    try {
+      const response = await api.delete(`/contracts/cancel-registers/${clientId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error checking check contract:', error);
+      throw error;
+    }
+  }

@@ -76,7 +76,7 @@ export default function FrmInforAccount() {
   return (
     <>
     
-    <div className="w-screen">
+    <div className="w-screen h-screen">
       <div className="fond-bold">Thông tin tài khoản</div>
       <form  onSubmit={handleSubmit}>
         <div className="flex rounded-md border-2 p-2 mb-2">
@@ -100,7 +100,7 @@ export default function FrmInforAccount() {
           name="password"
           value={formData.password}
           onChange={handleChange}
-          placeholder="mat khau"
+          placeholder="********"
           labelInput="Mật khau"
           labelButton="Đổi mật khẩu"
           onUpdate={handleClickButtonUpdate}

@@ -14,8 +14,9 @@ import { useEffect } from "react";
 import { debounce } from "lodash";
 import { useCallback } from "react";
 import { useRef } from "react";
+import { notifyError, notifySuccess } from "../toastify/toastify";
 
-const nameRegex = /^[A-Za-z]+$/;
+const nameRegex = /^[\p{L}\s]+$/u;
 const phoneRegex = /^(0[3|5|7|8|9])+([0-9]{8})$/;
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/
 const identityCardRegex = /^(0)([0-9]{11})$/;
@@ -163,7 +164,7 @@ const SubformRegis = ({ isOpen, onClose, openSubformLogin }) => {
       console.log(JSON.stringify(newAccount));
       createAccount(newAccount).then((res) => {
         if (res.status === 201) {
-          alert("Đăng ký tài khoản thành công.")
+          notifySuccess("Đăng ký tài khoản thành công.")
           const newClient = {
             "firstName": formData.firstName,
             "lastName": formData.lastName,
@@ -174,18 +175,18 @@ const SubformRegis = ({ isOpen, onClose, openSubformLogin }) => {
           }
           createClient(newClient).then((res) => {
             if (res.status === 201) {
-              alert("Đăng ký thông tin khách hàng thành công! Vui lòng đăng nhập.")
+              notifySuccess("Đăng ký thông tin khách hàng thành công! Vui lòng đăng nhập.")
               // onClose();
               // openSubformLogin();
             }
             else if (res.status === 404) {
-              alert("Đăng ký thông tin khách hàng thất bại! Kiểm tra lại thông tin")
+              notifyError("Đăng ký thông tin khách hàng thất bại! Kiểm tra lại thông tin")
             }
           })
           
         }
         else if (res.status === 404) {
-          alert("Đăng ký thất bại! Tài khoản đã tồn tại.")
+          notifyError("Đăng ký thất bại! Tài khoản đã tồn tại.")
         }
       })
     }

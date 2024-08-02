@@ -98,10 +98,10 @@ const Navbar = ({openSubForm, selectedNav, setSelectedNav} ) => {
             )}
             {selectedNav === 1 && (
               <div className={`${styles.submenu} left-1/2`}>
-                <ul>
+                <ul className="flex flex-col">
                   <li className='text-sky-500 italic'>Tra cứu các thông tin liên quan đến hoá đơn hoặc thông tin điện sử dụng... </li>
-                  <li className="cursor-pointer">Điện năng sử dụng</li>
-                  <li className="cursor-pointer">Giá bán điện</li>
+                  <Link href="/client/lookInfor/consumption-electric" className="cursor-pointer">Điện năng sử dụng</Link>
+                  <Link href="/client/lookInfor/electricity-price" className="cursor-pointer">Giá bán điện</Link>
                 </ul>
                 
               </div>
