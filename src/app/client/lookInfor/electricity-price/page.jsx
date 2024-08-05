@@ -1,21 +1,22 @@
-
 'use client'
+import { useAuth } from "@/components/context/authContext";
+import { useForm } from "@/components/context/frmNameContext";
+import NavLookupInfor from "@/components/navbar/navLookupInfor";
+import { useEffect } from "react";
 
-import ButtonCustome from "@/components/button/button";
-import { GeneratePDFBilPayment } from "@/utils/pdf";
-import { useState } from "react";
+export default function PageElectricityPrice() {
+    const {isLoggedIn} = useAuth();
+    const { setFormName } = useForm();
 
-
-export default function ExportPage() {
-    const [formData, setFormData] = useState({});
-  const handleClick = () => {
-    GeneratePDFBilPayment(formData);
-  }
-
- 
-  return (
-    <>
-        <ButtonCustome onClick={handleClick}>Generate bill</ButtonCustome>
-    </>
-  );
+    useEffect(() => {
+      // Thiết lập formName khi component được mount
+      if (isLoggedIn) {
+        setFormName("PageElectricPrice");
+      } else {
+        setFormName("PageNotLoggedIn");
+      }
+    }, [isLoggedIn]);
+    return (
+        <NavLookupInfor label="Xem giá điện"></NavLookupInfor>
+    )
 }

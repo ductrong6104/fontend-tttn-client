@@ -13,10 +13,11 @@ export default function ItemInforAccount({type, name, value, onChange, placehold
                 </div>
                 <input type={type} name={name} value={value} onChange={onChange} placeholder={placeholder} readOnly/>
             </div>
-            <div className="flex items-center">
+            {name === 'password' ? null : <div className="flex items-center">
                 <FaEdit className="absolute text-blue-400 ml-2"/>
                 <button className="bg-purple-100 p-2 pl-8 rounded-md end-0" onClick={handleClickButton}>{labelButton}</button>
-            </div>
+            </div>}
+            
         </div>
     )
 }

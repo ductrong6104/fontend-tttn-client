@@ -20,7 +20,7 @@ export default function FrmBillPayment(){
     const [reload, setReload] = useState(false);
     const [unpaidInvoices, setUnpaidInvoices] = useState([])
     const accountSession = AccountSession.getInstance();
-    
+
     const [selected, setSelected] = useState([]);
     const handleClickPayment = (row) => {
         const bill = row;
@@ -57,7 +57,7 @@ export default function FrmBillPayment(){
                 setUnpaidInvoices(res.data);
             }
         })
-    }, [reload])
+    }, [accountSession.getClientId(), reload])
 
     return (
         

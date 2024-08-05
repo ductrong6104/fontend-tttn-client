@@ -101,7 +101,7 @@ export default function FrmInforAccount() {
           value={formData.password}
           onChange={handleChange}
           placeholder="********"
-          labelInput="Mật khau"
+          labelInput="Mật khẩu"
           labelButton="Đổi mật khẩu"
           onUpdate={handleClickButtonUpdate}
         />
@@ -126,11 +126,11 @@ export default function FrmInforAccount() {
           onUpdate={handleClickButtonUpdate}
         />
         <ItemInforAccount
-          type="text"
+          type="date"
           name="birthday"
           value={formData.birthday}
           onChange={handleChange}
-          placeholder="ngay sinh"
+          placeholder="Ngày sinh"
           labelInput="Ngày sinh"
           labelButton="Cập nhật"
           onUpdate={handleClickButtonUpdate}
@@ -140,7 +140,7 @@ export default function FrmInforAccount() {
           name="address"
           value={formData.address}
           onChange={handleChange}
-          placeholder="dia chi"
+          placeholder="Địa chỉ"
           labelInput="Địa chỉ"
           labelButton="Cập nhật"
           onUpdate={handleClickButtonUpdate}
@@ -150,7 +150,7 @@ export default function FrmInforAccount() {
           name="email"
           value={formData.email}
           onChange={handleChange}
-          placeholder="email"
+          placeholder="Email"
           labelInput="Email"
           labelButton="Cập nhật"
           onUpdate={handleClickButtonUpdate}

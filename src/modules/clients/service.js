@@ -61,3 +61,42 @@ export const checkIdentityCardExists = async (identityCard) => {
       throw error;
     }
   } 
+
+  export const updatePhoneClient = async (clientId, phone) => {
+    try {
+      const response = await api.put(`/clients/${clientId}/phone`, phone);
+      return response.data;
+    } catch (error) {
+      console.error('Error checking phone:', error);
+      throw error;
+    }
+  }
+  export const updateIdentityCard = async (clientId, identityCard) => {
+    try {
+      const response = await api.put(`/clients/${clientId}/identityCard`, identityCard);
+      return response.data;
+    } catch (error) {
+      console.error('Error checking identityCard:', error);
+      throw error;
+    }
+  }
+
+  export const updateBirthday = async (clientId, birthday) => {
+    try {
+      const response = await api.put(`/clients/${clientId}/birthday`, birthday);
+      return response.data;
+    } catch (error) {
+      console.error('Error checking identityCard:', error);
+      throw error;
+    }
+  }
+
+  export const updateAddress = async (clientId, address) => {
+    try {
+      const response = await api.put(`/clients/${clientId}/address`, address);
+      return response.data;
+    } catch (error) {
+      console.error('Error checking identityCard:', error);
+      throw error;
+    }
+  }

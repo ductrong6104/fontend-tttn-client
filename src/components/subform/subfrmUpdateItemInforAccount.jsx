@@ -6,8 +6,9 @@ import InputCustome from "../input/input";
 import { IoPersonOutline } from "react-icons/io5";
 import { IoMdSave } from "react-icons/io";
 import AccountSession from "../../utils/account";
-import { updateEmailClient } from "@/modules/clients/service";
-import { useState } from "react";
+import { updateAddress, updateBirthday, updateEmailClient, updateIdentityCard, updatePhoneClient } from "@/modules/clients/service";
+import { useEffect, useState } from "react";
+import { notifyError, notifySuccess } from "../toastify/toastify";
 const phoneRegex = /^(0[3|5|7|8|9])+([0-9]{8})$/;
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
 const identityCardRegex = /^(0)([0-9]{11})$/;
@@ -19,7 +20,15 @@ export default function SubfrmUpdateItemInforAccount({
 }) {
   const { type, name, value, placeholder, labelInput } = item;
   const accountSession = AccountSession.getInstance();
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({
+    [item.name]: item.value,
+  });
+
+  useEffect(() => {
+    setFormData({
+      [item.name]: item.value,
+    });
+  }, [item])
   const [valueError, setValueError] = useState();
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -34,43 +43,98 @@ export default function SubfrmUpdateItemInforAccount({
     try {
       switch (name) {
         case "email":
-          if (!emailRegex.test(value)) {
+          
+          if (!emailRegex.test(formData[name])) {
             setValueError("Email không hợp lệ, ví dụ: trong@gmail.com");
             return;
           }
           updateEmailClient(accountSession.getClientId(), formData).then(
             (res) => {
               if (res.status === 200) {
-                alert("Cập nhật email thành công");
+                notifySuccess("Cập nhật email thành công");
                 // Đóng modal sau khi cập nhật thành công
                 onCheckUpdate();
                 onClose();
               } else {
-                alert("Cập nhật email thất bại");
+                notifyError("Cập nhật email thất bại");
                 setValueError("Email đã được sử dụng");
               }
             }
           );
           break;
         case "phone":
-          if (!phoneRegex.test(value)) {
+        
+          if (!phoneRegex.test(formData[name])) {
             setValueError(
               "Điện thoại chứa 10 số có đầu 03, 09; ví dụ: 0962522522"
             );
+            
             return;
           }
+          updatePhoneClient(accountSession.getClientId(), formData).then(
+            (res) => {
+              if (res.status === 200) {
+                notifySuccess("Cập nhật số điện thoại thành công");
+                // Đóng modal sau khi cập nhật thành công
+                onCheckUpdate();
+                onClose();
+              } else {
+                notifyError("Cập nhật số điện thoại thất bại");
+                setValueError("Số điện thoại đã được sử dụng");
+              }
+            }
+          );
           break;
         case "identityCard":
-          if (!identityCardRegex.test(identityCard)) {
+          if (!identityCardRegex.test(formData[name])) {
             setValueError(
               "Căn cước công dân có 12 số, đầu 0, ví dụ: 052226217914"
             );
             return;
           }
+          updateIdentityCard(accountSession.getClientId(), formData).then(
+            (res) => {
+              if (res.status === 200) {
+                notifySuccess("Cập nhật căn cước thành công");
+                // Đóng modal sau khi cập nhật thành công
+                onCheckUpdate();
+                onClose();
+              } else {
+                notifyError("Cập nhật căn cước thất bại");
+                setValueError("Căn cước đã được sử dụng");
+              }
+            }
+          );
           break;
         case "birthday":
+          updateBirthday(accountSession.getClientId(), formData).then(
+            (res) => {
+              if (res.status === 200) {
+                notifySuccess("Cập nhật ngày sinh thành công");
+                // Đóng modal sau khi cập nhật thành công
+                onCheckUpdate();
+                onClose();
+              } else {
+                notifyError("Cập nhật ngày sinh thất bại");
+                setValueError("ngày sinh đã được sử dụng");
+              }
+            }
+          );
           break;
         case "address":
+          updateAddress(accountSession.getClientId(), formData).then(
+            (res) => {
+              if (res.status === 200) {
+                notifySuccess("Cập nhật địa chỉ thành công");
+                // Đóng modal sau khi cập nhật thành công
+                onCheckUpdate();
+                onClose();
+              } else {
+                notifyError("Cập nhật địa chỉ thất bại");
+                setValueError("Địa chỉ đã được sử dụng");
+              }
+            }
+          );
           break;
         // Thêm các trường khác nếu cần
         default:
@@ -110,7 +174,7 @@ export default function SubfrmUpdateItemInforAccount({
           <InputCustome
             type={type}
             name={name}
-            value={formData.name}
+            value={formData[name]}
             onChange={handleChange}
             placeholder={placeholder}
             required

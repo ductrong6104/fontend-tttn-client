@@ -162,7 +162,7 @@ const TableComponent = ({ data, columns, onEdit, onDelete, presentName, selected
                     </TableSortLabel>
                   </TableCell>
                 ))}
-                <TableCell>Thực hiện</TableCell>
+                {presentName === "electricityPrice" ? <TableCell/> : <TableCell>Thực hiện</TableCell>} 
               </TableRow>
             </TableHead>
             <TableBody>
@@ -261,7 +261,7 @@ const TableComponent = ({ data, columns, onEdit, onDelete, presentName, selected
                       <ButtonCustome onClick={() => onEdit(row)}>Thanh toán</ButtonCustome>
                       
                     </TableCell>
-                  ): (
+                  ): presentName === "electricityPrice" ? <TableCell/> :(
                     <TableCell>
                       <IconButton onClick={() => onEdit(row)}>
                         <EditIcon />

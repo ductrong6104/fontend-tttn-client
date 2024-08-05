@@ -6,6 +6,7 @@ import PageNotLoggedIn from "../page/pageNotLoggedIn";
 import FrmBillPayment from "../form/frmBillPayment";
 import FrmContractRegis from "../form/frmContractRegis";
 import PageConsumptionElectric from "../page/pageConsumptionElectric";
+import PageElectricPrice from "../page/pageElectricPrice";
 
 
 export default function NavLookupInfor({label}){
@@ -33,6 +34,7 @@ export default function NavLookupInfor({label}){
                 </div>
                 {formName === "PageConsumptionElectric" && <PageConsumptionElectric/>}
                 {formName === "PageNotLoggedIn" && <PageNotLoggedIn />}
+                {formName === "PageElectricPrice" && <PageElectricPrice />}
             </div>
         </div>
     )

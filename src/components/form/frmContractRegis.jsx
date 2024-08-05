@@ -35,6 +35,7 @@ export default function FrmContractRegis() {
   const [regisSuccess, setRegisSuccess] = useState(false);
   const [textButton, setTextButton] = useState(null);
   const [reload, setReload] = useState(false);
+  const [contractIdExists, setContractIdExists] = useState();
   const [contractStatus, setContractStatus] = useState({
     "contractId": "",
     "statusId": "",
@@ -57,6 +58,7 @@ export default function FrmContractRegis() {
           phone: res.data.phone,
           identityCard: res.data.identityCard,
           birthday: res.data.birthday,
+          address: res.data.address,
           clientId: accountSession.getClientId(),
           startDate: formatDateForDatabase(getCurrentDate()),
         });
@@ -81,7 +83,11 @@ export default function FrmContractRegis() {
       if (res.status ===200){
         console.log(res.data);
         setContractExists(res.data.exists);
-        setIsReadOnly(res.data.exists);
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          electricTypeId: res.data.electricTypeId,
+        }));
+        setContractIdExists(res.data.contractId);
       }
     })
   }, [accountSession.getClientId(), reload]);
@@ -164,6 +170,18 @@ const formatDateForDatabase = (date) => {
       } 
        else if (textButton == "Kết thúc hợp đồng"){
         // setTextButton("Kết thúc hợp đồng");
+  
+        terminateContract(contractIdExists).then((res)=>{
+          if (res.status === 200){
+              notifySuccess("Chấm dứt hợp đồng thành công");
+              setReload(!reload);
+          }
+          else{
+              notifyError("Phải ghi điện hôm nay cho hợp đồng này trước khi kết thúc")
+              setReload(!reload);
+              console.log(`res error`, res)
+          }
+        })
       } 
     else 
       
@@ -332,7 +350,8 @@ const formatDateForDatabase = (date) => {
               options={electricTypes}
               onSelect={handleSelect}
               className="border-2 w-full rounded-md p-2 bg-white"
-              required={contractStatus?.statusId != 1}
+              value={formData.electricTypeId}
+              required={contractStatus?.statusId != 1 && contractStatus?.statusId != 5}
             />
           </div>
           <div className="w-1/2 ml-4"></div>
