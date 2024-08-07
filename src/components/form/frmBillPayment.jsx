@@ -24,7 +24,8 @@ export default function FrmBillPayment(){
     const [selected, setSelected] = useState([]);
     const handleClickPayment = (row) => {
         const bill = row;
-        if (bill.status){
+        // status = true: da thanh toan cho xuat hoa don, status = false: chua thanh toan cho in thong bao tien dien
+        if (bill.status === true){
             console.log("xuat pdf")
             getBillToGeneratePdf(bill.id, accountSession.getClientId()).then((res)=>{
                 if (res.status === 200){

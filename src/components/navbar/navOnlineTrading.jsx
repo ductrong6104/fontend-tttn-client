@@ -6,15 +6,15 @@ import PageNotLoggedIn from "../page/pageNotLoggedIn";
 import FrmBillPayment from "../form/frmBillPayment";
 import FrmContractRegis from "../form/frmContractRegis";
 import FrmBillList from "../form/frmBillList";
-
+import { useRouter } from "next/navigation";
 
 export default function NavOnlineTrading({label}){
     const {formName} = useForm()
-
+    const router = useRouter();
     return (
         <div className="p-4">
             <div className="flex items-center">
-                <div className="text-blue-500">Trang chủ</div>
+                <div className="text-blue-500 cursor-pointer" onClick={() => router.push("/")}>Trang chủ</div>
                 <FaChevronRight />
                 <div className="text-blue-500">Giao dịch trực tuyến</div>
                 <FaChevronRight />

@@ -17,3 +17,12 @@ export const getAmountEveryMonthInEveryYear = async (amountEveryMonthInEveryYear
         console.log(err);
     }
 }
+
+export const getConsumptionFromDateToDate = async (consumptionFromDateToDateRequestDto) => {
+    try{
+        const res = await api.post(`/statisticals/consumption-from-date-to-date`, consumptionFromDateToDateRequestDto);
+        return res.data;
+    }catch(err){
+        console.log(err);
+    }
+}

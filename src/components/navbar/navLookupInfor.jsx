@@ -3,19 +3,19 @@ import { FaChevronRight } from "react-icons/fa6";
 
 import { useForm } from "../context/frmNameContext";
 import PageNotLoggedIn from "../page/pageNotLoggedIn";
-import FrmBillPayment from "../form/frmBillPayment";
-import FrmContractRegis from "../form/frmContractRegis";
+
 import PageConsumptionElectric from "../page/pageConsumptionElectric";
 import PageElectricPrice from "../page/pageElectricPrice";
+import { useRouter } from "next/navigation";
 
 
 export default function NavLookupInfor({label}){
     const {formName} = useForm()
-
+    const router = useRouter();
     return (
         <div className="p-4 overflow-auto">
             <div className="flex items-center">
-                <div className="text-blue-500">Trang chủ</div>
+                <div className="text-blue-500 cursor-pointer" onClick={() => router.push("/")}>Trang chủ</div>
                 <FaChevronRight />
                 <div className="text-blue-500">Tra cứu thông tin</div>
                 <FaChevronRight />

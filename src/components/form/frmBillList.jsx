@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import TableComponent from "../table/tableComponent";
-import { getAllInvoicesByClientId, getBillToGeneratePdf, getUnpaidInvoicesByClientId, updateStatusBill } from "@/modules/bills/service";
+import { getAllInvoicesByClientId, getBillToGeneratePdf, getBillToGeneratePdfPayment, getUnpaidInvoicesByClientId, updateStatusBill } from "@/modules/bills/service";
 import AccountSession from "@/utils/account";
-import { GeneratePDF } from "@/utils/pdf";
+import { GeneratePDF, GeneratePDFBilPayment } from "@/utils/pdf";
 import { notifyError, notifySuccess } from "../toastify/toastify";
 
 export default function FrmBillList(){
@@ -18,11 +18,13 @@ export default function FrmBillList(){
   
     const handleClickPayment = (row) => {
         const bill = row
-        if (bill.status){
+         // status = true: da thanh toan cho xuat hoa don, status = false: chua thanh toan cho in thong bao tien dien
+         
+        if (bill.paymentStatus === true){
             console.log("xuat pdf")
-            getBillToGeneratePdf(bill.id, accountSession.getClientId()).then((res)=>{
+            getBillToGeneratePdfPayment(bill.id, accountSession.getClientId()).then((res)=>{
                 if (res.status === 200){
-                    GeneratePDF(res.data);
+                    GeneratePDFBilPayment(res.data);
                     notifySuccess("Xuất hóa đơn thành công");
                 }
                 else{

@@ -152,7 +152,7 @@ const TableComponent = ({ data, columns, onEdit, onDelete, presentName, selected
                 </TableCell> : null}
                 
                 {columns.map(({ id, label }) => (
-                  <TableCell key={id} className="flex flex-col">
+                  <TableCell key={id} >
                     <TableSortLabel
                       active={orderBy === id}
                       direction={orderBy === id ? sortDirection : "asc"}
