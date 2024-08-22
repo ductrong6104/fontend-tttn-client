@@ -1,0 +1,45 @@
+{
+  "name": "fontend-tttn-client",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 4000",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.13.0",
+    "@emotion/styled": "^11.13.0",
+    "@mui/icons-material": "^5.16.6",
+    "@mui/material": "^5.16.6",
+    "@mui/x-date-pickers": "^7.12.0",
+    "@mui/x-date-pickers-pro": "^7.12.0",
+    "@react-pdf/renderer": "^3.4.4",
+    "axios": "^1.7.2",
+    "chart.js": "^4.4.3",
+    "date-fns": "^3.6.0",
+    "dayjs": "^1.11.12",
+    "fontend-tttn-client": "file:",
+    "html2pdf.js": "^0.10.2",
+    "jspdf": "^2.5.1",
+    "jspdf-autotable": "^3.8.2",
+    "lodash": "^4.17.21",
+    "next": "14.2.5",
+    "qrcode": "^1.5.3",
+    "react": "^18",
+    "react-chartjs-2": "^5.2.0",
+    "react-dom": "^18",
+    "react-hook-form": "^7.52.2",
+    "react-icons": "^5.2.1",
+    "react-modal": "^3.16.1",
+    "react-toastify": "^10.0.5"
+  },
+  "devDependencies": {
+    "eslint": "^8",
+    "eslint-config-next": "14.2.5",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1"
+  },
+  "proxy": "http://localhost:8080"
+}
