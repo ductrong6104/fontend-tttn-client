@@ -21,9 +21,11 @@ import {
 import { useRouter } from "next/navigation";
 import { notifyError, notifySuccess } from "../toastify/toastify";
 import { TextField } from "@mui/material";
+import Map from "../map/Map";
+import { getPowerMeterByContract } from "@/modules/power-meters/service";
 export default function FrmContractRegis() {
   const accountSession = AccountSession.getInstance();
-
+  const [addresses, setAddresses] = useState([]);
   const [formData, setFormData] = useState({
     fullName: "",
     birthday: "",
@@ -35,16 +37,19 @@ export default function FrmContractRegis() {
     electricTypeId: "",
     startDate: "",
   });
+  const [position, setPosition] = useState({
+    lat: 10.8535886,
+    lng: 106.7878561,
+  });
   const [electricTypes, setElectricTypes] = useState([]);
   const [electricTypeIdSelected, setElectricTypeIdSelected] = useState(null);
   const [contractExists, setContractExists] = useState(false);
   const [isReadOnly, setIsReadOnly] = useState(true);
   const [regisSuccess, setRegisSuccess] = useState(false);
-  const [textButton, setTextButton] = useState('');
+  const [textButton, setTextButton] = useState("");
   const [reload, setReload] = useState(false);
   const [contractIdExists, setContractIdExists] = useState();
-  const [contractStatus, setContractStatus] = useState({
-  });
+  const [contractStatus, setContractStatus] = useState({});
   const handleSelect = (value) => {
     console.log("Selected value:", value);
     setFormData((prevFormData) => ({
@@ -92,6 +97,17 @@ export default function FrmContractRegis() {
           electricTypeId: res.data.electricTypeId,
         }));
         setContractIdExists(res.data.contractId);
+        if (res.data.contractId) {
+          getPowerMeterByContract(res.data.contractId).then((resPower) => {
+            if (resPower.status === 200) {
+              setPosition({
+                lat: resPower.data.latitude,
+                lng: resPower.data.longitude,
+              });
+              handleChangeAddress(resPower.data.installationLocation);
+            }
+          });
+        }
       }
     });
   }, [accountSession, reload]);
@@ -108,7 +124,10 @@ export default function FrmContractRegis() {
     if (contractStatus.statusId === 1) {
       setTextButton("Hủy yêu cầu");
       setIsReadOnly(true);
-    } else if (contractStatus.statusId === 3 || contractStatus.statusId === null) {
+    } else if (
+      contractStatus.statusId === 3 ||
+      contractStatus.statusId === null
+    ) {
       setTextButton("Đăng ký");
       setIsReadOnly(true);
     } else if (contractStatus.statusId === 5) {
@@ -118,7 +137,6 @@ export default function FrmContractRegis() {
       setTextButton("Cập nhật thêm thông tin");
       setIsReadOnly(false);
     }
-    
   }, [contractStatus]);
   // Hàm để lấy ngày hiện tại
   const getCurrentDate = () => {
@@ -142,6 +160,13 @@ export default function FrmContractRegis() {
       [name]: value,
     }));
   };
+
+  const handleChangeAddress = (value) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      ["address"]: value,
+    }));
+  };
   const handleSubmit = (e) => {
     e.preventDefault();
     const newContract = {
@@ -149,10 +174,14 @@ export default function FrmContractRegis() {
       electricTypeId: formData.electricTypeId,
       electricitySupplyAddress: formData.address,
       startDate: formData.startDate,
+      longitude: position.lon,
+      latitude: position.lat,
     };
-    console.log(newContract);
+    console.log(`position ${JSON.stringify(position)}`);
+    console.log(`new contract ${JSON.stringify(newContract)}`);
+
     console.log(`Contract status: ${contractStatus == null}`);
-    if (textButton === "Đăng ký"){
+    if (textButton === "Đăng ký") {
       createContract(newContract).then((res) => {
         if ((res.status = 200)) {
           notifySuccess(
@@ -163,10 +192,7 @@ export default function FrmContractRegis() {
           notifyError("Đăng ký hợp đồng thất bại");
         }
       });
-     
-    }
-    
-    else if (textButton == "Hủy yêu cầu") {
+    } else if (textButton == "Hủy yêu cầu") {
       cancelRegisterByClientId(accountSession.getClientId()).then((res) => {
         if ((res.status = 200)) {
           notifySuccess("Hủy đăng ký thành công");
@@ -204,20 +230,23 @@ export default function FrmContractRegis() {
         birthday: formData.birthday,
         phone: formData.phone,
         email: formData.email,
-        identityCard: formData.identityCard
-      }
-      console.log(`updateClient`, updateClient)
-      
-      updateInforForReject(contractStatus.contractId, accountSession.getClientId(), updateClient).then((res)=>{
-        if (res.status === 200){
+        identityCard: formData.identityCard,
+      };
+      console.log(`updateClient`, updateClient);
+
+      updateInforForReject(
+        contractStatus.contractId,
+        accountSession.getClientId(),
+        updateClient
+      ).then((res) => {
+        if (res.status === 200) {
           notifySuccess("Gửi yêu cầu bổ sung thông tin đơn đăng ký thành công");
           setReload(!reload);
-        }
-        else {
-          notifyError("Gửi yêu cầu bổ sung thông tin đơn đăng ký thất bại")
+        } else {
+          notifyError("Gửi yêu cầu bổ sung thông tin đơn đăng ký thất bại");
           console.log(res.data);
         }
-      })
+      });
     }
   };
 
@@ -359,8 +388,14 @@ export default function FrmContractRegis() {
             required={true}
             readOnly={!isReadOnly}
           ></InputCustome>
+          <Map
+            addresses={addresses}
+            onChangeAddress={handleChangeAddress}
+            onChangePosition={setPosition}
+            defaultPosition={position}
+          ></Map>
         </div>
-        {contractStatus?.statusId === 4 ?(
+        {contractStatus?.statusId === 4 ? (
           <div className="flex flex-row justify-between mb-4">
             <div className="w-1/2">
               <div className="flex items-center">
@@ -369,33 +404,35 @@ export default function FrmContractRegis() {
                   Loại điện
                 </label>
               </div>
-              <div className="border-2 w-full rounded-md p-2 bg-white">{contractStatus?.electricTypeName}</div>
+              <div className="border-2 w-full rounded-md p-2 bg-white">
+                {contractStatus?.electricTypeName}
+              </div>
             </div>
             <div className="w-1/2 ml-4"></div>
           </div>
         ) : (
           <div className="flex flex-row justify-between mb-4">
-          <div className="w-1/2">
-            <div className="flex items-center">
-              <IoPersonOutline className="text-red-500 mr-2" />
-              <label htmlFor="" className="text-black font-bold">
-                Loại điện
-              </label>
+            <div className="w-1/2">
+              <div className="flex items-center">
+                <IoPersonOutline className="text-red-500 mr-2" />
+                <label htmlFor="" className="text-black font-bold">
+                  Loại điện
+                </label>
+              </div>
+              <ComboBox
+                options={electricTypes}
+                onSelect={handleSelect}
+                className="border-2 w-full rounded-md p-2 bg-white"
+                value={formData.electricTypeId}
+                required={
+                  contractStatus?.statusId != 1 && contractStatus?.statusId != 5
+                }
+              />
             </div>
-            <ComboBox
-              options={electricTypes}
-              onSelect={handleSelect}
-              className="border-2 w-full rounded-md p-2 bg-white"
-              value={formData.electricTypeId}
-              required={
-                contractStatus?.statusId != 1 && contractStatus?.statusId != 5
-              }
-            />
+            <div className="w-1/2 ml-4"></div>
           </div>
-          <div className="w-1/2 ml-4"></div>
-        </div>
         )}
-        
+
         {contractStatus != null ? (
           <div className="flex flex-row justify-between mb-4">
             <div className="w-1/2">
@@ -406,7 +443,9 @@ export default function FrmContractRegis() {
                 </label>
               </div>
               <div className="border-2 p-2 rounded-md">
-                {contractStatus.nameStatus ? contractStatus.nameStatus : "Chưa có hợp đồng nào"}
+                {contractStatus.nameStatus
+                  ? contractStatus.nameStatus
+                  : "Chưa có hợp đồng nào"}
               </div>
             </div>
           </div>
@@ -421,7 +460,13 @@ export default function FrmContractRegis() {
                   Lý do từ chối
                 </label>
               </div>
-              <TextField multiline rows={4} fullWidth value={contractStatus.reasonForRejection} inputProps={{readOnly: true}}></TextField>
+              <TextField
+                multiline
+                rows={4}
+                fullWidth
+                value={contractStatus.reasonForRejection}
+                inputProps={{ readOnly: true }}
+              ></TextField>
             </div>
           </div>
         )}

@@ -10,7 +10,7 @@ import FrmContractRegis from "@/components/form/frmContractRegis";
 export default function PageContractRegis() {
     const {isLoggedIn} = useAuth();
     const { setFormName } = useForm();
-
+    
     useEffect(() => {
       // Thiết lập formName khi component được mount
       if (isLoggedIn) {
