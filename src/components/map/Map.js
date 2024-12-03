@@ -53,7 +53,7 @@ function FitBoundsToMarkers({ markers }) {
   useEffect(() => {
     if (markers.length > 0) {
       const bounds = markers.map((marker) => [marker.lat, marker.lng]);
-      map.fitBounds(bounds, { padding: [50, 50] }); // Thêm khoảng cách padding
+      // map.fitBounds(bounds, { padding: [50, 50] }); // Thêm khoảng cách padding
     }
   }, [markers, map]);
 

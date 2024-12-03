@@ -26,6 +26,10 @@ import { getPowerMeterByContract } from "@/modules/power-meters/service";
 export default function FrmContractRegis() {
   const accountSession = AccountSession.getInstance();
   const [addresses, setAddresses] = useState([]);
+  const [position, setPosition] = useState({
+    lat: 10.8535886,
+    lng: 106.7878561,
+  });
   const [formData, setFormData] = useState({
     fullName: "",
     birthday: "",
@@ -36,10 +40,6 @@ export default function FrmContractRegis() {
     address: "",
     electricTypeId: "",
     startDate: "",
-  });
-  const [position, setPosition] = useState({
-    lat: 10.8535886,
-    lng: 106.7878561,
   });
   const [electricTypes, setElectricTypes] = useState([]);
   const [electricTypeIdSelected, setElectricTypeIdSelected] = useState(null);
@@ -208,16 +208,16 @@ export default function FrmContractRegis() {
       terminateContract(contractIdExists).then((res) => {
         if (res.status === 204) {
           if (res.data != null) {
-            notifyError("Phải ghi điện trước khi kết thúc");
-            createElectricRecording(res.data).then((res) => {
-              if (res.status === 201) {
-                notifySuccess("Thêm phân công ghi điện thành công");
-              } else {
-                notifyError(
-                  "Vui lòng thông báo nhân viên ghi điện đã được phân công"
-                );
-              }
-            });
+            notifyError("Nhân viên ghi điện trước khi kết thúc");
+            // createElectricRecording(res.data).then((res) => {
+            //   if (res.status === 201) {
+            //     notifySuccess("Thêm phân công ghi điện thành công");
+            //   } else {
+            //     notifyError(
+            //       "Vui lòng thông báo nhân viên ghi điện đã được phân công"
+            //     );
+            //   }
+            // });
           } else {
             notifySuccess("Kết thúc hợp đồng thành công");
             setReload(!reload);
