@@ -23,7 +23,7 @@ import { notifyError, notifySuccess } from "../toastify/toastify";
 import { TextField } from "@mui/material";
 import Map from "../map/Map";
 import { getPowerMeterByContract } from "@/modules/power-meters/service";
-export default function FrmContractRegis() {
+export default function FrmContractRegisVersionOld() {
   const accountSession = AccountSession.getInstance();
   const [addresses, setAddresses] = useState([]);
   const [position, setPosition] = useState({
@@ -87,7 +87,57 @@ export default function FrmContractRegis() {
       }
     });
   }, [accountSession]);
-
+  useEffect(() => {
+    checkContractExists(accountSession.getClientId()).then((res) => {
+      if (res.status === 200) {
+        console.log(res.data);
+        setContractExists(res.data.exists);
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          electricTypeId: res.data.electricTypeId,
+        }));
+        setContractIdExists(res.data.contractId);
+        if (res.data.contractId) {
+          getPowerMeterByContract(res.data.contractId).then((resPower) => {
+            if (resPower.status === 200) {
+              setPosition({
+                lat: resPower.data.latitude,
+                lng: resPower.data.longitude,
+              });
+              handleChangeAddress(resPower.data.installationLocation);
+            }
+          });
+        }
+      }
+    });
+  }, [accountSession, reload]);
+  useEffect(() => {
+    getContractStatusByClientId(accountSession.getClientId()).then((res) => {
+      if (res.status === 200) {
+        console.log(`contractStatus 123`, res.data);
+        console.log(`contractStatus is null?`, res.data);
+        setContractStatus(res.data);
+      }
+    });
+  }, [accountSession, reload]);
+  useEffect(() => {
+    if (contractStatus.statusId === 1) {
+      setTextButton("Hủy yêu cầu");
+      setIsReadOnly(true);
+    } else if (
+      contractStatus.statusId === 3 ||
+      contractStatus.statusId === null
+    ) {
+      setTextButton("Đăng ký");
+      setIsReadOnly(true);
+    } else if (contractStatus.statusId === 5) {
+      setTextButton("Kết thúc hợp đồng");
+      setIsReadOnly(true);
+    } else if (contractStatus.statusId === 4) {
+      setTextButton("Cập nhật thêm thông tin");
+      setIsReadOnly(false);
+    }
+  }, [contractStatus]);
   // Hàm để lấy ngày hiện tại
   const getCurrentDate = () => {
     return new Date();
@@ -131,14 +181,73 @@ export default function FrmContractRegis() {
     console.log(`new contract ${JSON.stringify(newContract)}`);
 
     console.log(`Contract status: ${contractStatus == null}`);
-    createContract(newContract).then((res) => {
-      if ((res.status = 200)) {
-        notifySuccess("Gửi yêu cầu đăng ký hợp đồng thành công, chờ xác nhận");
-        setRegisSuccess(true);
-      } else {
-        notifyError("Đăng ký hợp đồng thất bại");
-      }
-    });
+    if (textButton === "Đăng ký") {
+      createContract(newContract).then((res) => {
+        if ((res.status = 200)) {
+          notifySuccess(
+            "Gửi yêu cầu đăng ký hợp đồng thành công, chờ xác nhận"
+          );
+          setRegisSuccess(true);
+        } else {
+          notifyError("Đăng ký hợp đồng thất bại");
+        }
+      });
+    } else if (textButton == "Hủy yêu cầu") {
+      cancelRegisterByClientId(accountSession.getClientId()).then((res) => {
+        if ((res.status = 200)) {
+          notifySuccess("Hủy đăng ký thành công");
+          setReload(!reload);
+        } else {
+          notifyError("Hủy đăng ký thất bại");
+        }
+      });
+    } else if (textButton == "Kết thúc hợp đồng") {
+      // setTextButton("Kết thúc hợp đồng");
+
+      console.log(`contractIdExists`, contractIdExists);
+      terminateContract(contractIdExists).then((res) => {
+        if (res.status === 204) {
+          if (res.data != null) {
+            notifyError("Nhân viên ghi điện trước khi kết thúc");
+            // createElectricRecording(res.data).then((res) => {
+            //   if (res.status === 201) {
+            //     notifySuccess("Thêm phân công ghi điện thành công");
+            //   } else {
+            //     notifyError(
+            //       "Vui lòng thông báo nhân viên ghi điện đã được phân công"
+            //     );
+            //   }
+            // });
+          } else {
+            notifySuccess("Kết thúc hợp đồng thành công");
+            setReload(!reload);
+          }
+        }
+      });
+    } else if (textButton == "Cập nhật thêm thông tin") {
+      const updateClient = {
+        fullName: formData.fullName,
+        birthday: formData.birthday,
+        phone: formData.phone,
+        email: formData.email,
+        identityCard: formData.identityCard,
+      };
+      console.log(`updateClient`, updateClient);
+
+      updateInforForReject(
+        contractStatus.contractId,
+        accountSession.getClientId(),
+        updateClient
+      ).then((res) => {
+        if (res.status === 200) {
+          notifySuccess("Gửi yêu cầu bổ sung thông tin đơn đăng ký thành công");
+          setReload(!reload);
+        } else {
+          notifyError("Gửi yêu cầu bổ sung thông tin đơn đăng ký thất bại");
+          console.log(res.data);
+        }
+      });
+    }
   };
 
   if (regisSuccess) return <h1>Chờ xác nhận đăng ký hợp đồng từ công ty</h1>;
@@ -146,7 +255,13 @@ export default function FrmContractRegis() {
   return (
     <div className="border-2 w-screen p-2 pl-8 pr-8">
       <div className="flex justify-between items-center">
-        <div>Đăng ký hợp đồng</div>
+        <div>
+          {contractStatus?.statusId === 4
+            ? "Bổ sung thông tin đã đăng ký"
+            : contractStatus?.statusId === 5
+            ? "Thông tin hợp đồng đã đăng ký"
+            : "Đăng ký hợp đồng"}
+        </div>
         <dir>
           <div>Thời gian gửi yêu cầu</div>
           <div>{formatDateForDisplay(getCurrentDate())}</div>
@@ -318,9 +433,47 @@ export default function FrmContractRegis() {
           </div>
         )}
 
+        {contractStatus != null ? (
+          <div className="flex flex-row justify-between mb-4">
+            <div className="w-1/2">
+              <div className="flex items-center">
+                <IoPersonOutline className="text-red-500 mr-2" />
+                <label htmlFor="" className="text-black font-bold">
+                  Trạng thái hợp đồng
+                </label>
+              </div>
+              <div className="border-2 p-2 rounded-md">
+                {contractStatus.nameStatus
+                  ? contractStatus.nameStatus
+                  : "Chưa có hợp đồng nào"}
+              </div>
+            </div>
+          </div>
+        ) : null}
+
+        {contractStatus != null && contractStatus.statusId == 4 && (
+          <div className="flex flex-row justify-between mb-4">
+            <div className="w-1/2">
+              <div className="flex items-center">
+                <IoPersonOutline className="text-red-500 mr-2" />
+                <label htmlFor="" className="text-red-500 font-bold">
+                  Lý do từ chối
+                </label>
+              </div>
+              <TextField
+                multiline
+                rows={4}
+                fullWidth
+                value={contractStatus.reasonForRejection}
+                inputProps={{ readOnly: true }}
+              ></TextField>
+            </div>
+          </div>
+        )}
+
         <div className="flex justify-end items-center">
           <ButtonCustome className="bg-gray-400 text-white" type="submit">
-            Đăng 
+            {textButton}
           </ButtonCustome>
           <FaAngleRight className="absolute text-white" />
         </div>

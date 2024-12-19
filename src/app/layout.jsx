@@ -4,7 +4,7 @@ import HeaderPage from "@/components/header/header";
 import { SubformLoginProvider } from "@/components/context/subformLoginContext";
 import { AuthProvider } from "@/components/context/authContext";
 import { ToastContainer } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 import { FormProvider } from "@/components/context/frmNameContext";
 import Footer from "@/components/footer/footer";
 
@@ -19,27 +19,20 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={inter.className}>
-          <AuthProvider>
-            <SubformLoginProvider>
-
+        <AuthProvider>
+          <SubformLoginProvider>
             <FormProvider>
-
-            
               <HeaderPage></HeaderPage>
-              
+
               <div className="container mx-auto px-36 bg-white mb-2">
-              {children}
+                {children}
               </div>
-              </FormProvider>
-              </SubformLoginProvider>
-              <Footer></Footer>
-            <ToastContainer/>
-          </AuthProvider>
-        
-        
-        
-        </body>
+            </FormProvider>
+          </SubformLoginProvider>
+          <Footer></Footer>
+          <ToastContainer />
+        </AuthProvider>
+      </body>
     </html>
   );
 }
-

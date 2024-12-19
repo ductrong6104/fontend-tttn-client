@@ -7,19 +7,19 @@ import { useForm } from "@/components/context/frmNameContext";
 import { useEffect } from "react";
 import FrmContractRegis from "@/components/form/frmContractRegis(verold)";
 
-export default function PageContractRegis() {
+export default function PageApplicationFrm() {
     const {isLoggedIn} = useAuth();
     const { setFormName } = useForm();
     
     useEffect(() => {
       // Thiết lập formName khi component được mount
       if (isLoggedIn) {
-        setFormName("FrmContractRegis");
+        setFormName("FrmApplicationFrm");
       } else {
         setFormName("PageNotLoggedIn");
       }
     }, [isLoggedIn]);
     return (
-        <NavOnlineTrading label="Thay đổi hợp đồng mua bán điện"></NavOnlineTrading>
+        <NavOnlineTrading label="Danh sách đơn đăng ký"></NavOnlineTrading>
     )
 }

@@ -12,6 +12,9 @@ import ButtonCustome from "../button/button";
 import { notifyError, notifySuccess } from "../toastify/toastify";
 import { GeneratePDF } from "@/utils/pdf";
 import TableComponent from "../table/tableComponent";
+import YesNoDialog from "../dialog/yesNoDialog";
+import { useDisclosure } from "@nextui-org/modal";
+import SubFrmYesNoDialog from "../subform/subfrmYesNoDialog";
 
 export default function FrmBillPayment() {
   // const [bill, setBill] = useState({
@@ -22,6 +25,20 @@ export default function FrmBillPayment() {
   //   paymentDate: "",
   //   status: "",
   // });
+
+  const [isOpenSubfrmYesNoDialog, setIsOpenSubfrmYesNoDialog] = useState(false);
+  const openSubfrmYesNoDialog = () => setIsOpenSubfrmYesNoDialog(true);
+  const closeSubfrmYesNoDialog = () => setIsOpenSubfrmYesNoDialog(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [dialogConfig, setDialogConfig] = useState({
+    title: "",
+    bodyText: "",
+    onYes: () => {},
+  });
+
+  useEffect(() => {
+    console.log(`titel config dialog: ${dialogConfig.title}`);
+  }, [dialogConfig]);
   const [reload, setReload] = useState(false);
   const [unpaidInvoices, setUnpaidInvoices] = useState([]);
   const accountSession = AccountSession.getInstance();
@@ -29,6 +46,7 @@ export default function FrmBillPayment() {
   const [selected, setSelected] = useState([]);
   const handleClickPayment = (row, action) => {
     const bill = row;
+
     // action = 1: cho xem thông báo, action = 0: chua thanh toan nên thực hiện thanh toán
     if (action === 1) {
       console.log("xuat pdf");
@@ -44,21 +62,26 @@ export default function FrmBillPayment() {
         }
       );
     } else {
-        document.title = "Thanh toán hóa đơn"
-      if (
-        window.confirm(
-          `Xác nhận thanh toán hóa đơn tiền điện với số tiền ${bill.totalAmount} VND?`
-        )
-      )
-        updateStatusBill(bill.id, { status: true }).then((res) => {
-          if (res.status === 200) {
-            notifySuccess("Thanh toán thành công");
-            setReload(!reload);
-          } else {
-            notifyError("Thanh toán thất bại");
-            console.log(res.data);
-          }
-        });
+      setDialogConfig({
+        title: "Thanh toán hóa đơn",
+        bodyText: `Bạn có muốn thanh toán hóa đơn với số tiền: ${bill.id} ?`,
+        onYes: () => {
+          updateStatusBill(bill.id, { status: true }).then((res) => {
+            if (res.status === 200) {
+              notifySuccess("Thanh toán thành công");
+              setReload(!reload);
+            } else {
+              notifyError("Thanh toán thất bại");
+              console.log(res.data);
+            }
+          });
+          closeSubfrmYesNoDialog();
+        },
+      });
+      openSubfrmYesNoDialog();
+      // if (window.confirm(`Xác nhận thanh toán số tiền: ${bill.totalAmount}`)) {
+
+      // }
     }
   };
 
@@ -86,6 +109,14 @@ export default function FrmBillPayment() {
         setSelected={setSelected}
         onEdit={handleClickPayment}
       ></TableComponent>
+
+      <SubFrmYesNoDialog
+        isOpen={isOpenSubfrmYesNoDialog}
+        onClose={closeSubfrmYesNoDialog}
+        title={dialogConfig.title}
+        onYes={dialogConfig.onYes}
+        bodyText={dialogConfig.bodyText}
+      ></SubFrmYesNoDialog>
     </div>
   );
 }

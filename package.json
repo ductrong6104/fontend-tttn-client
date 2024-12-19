@@ -15,7 +15,10 @@
     "@mui/material": "^5.16.6",
     "@mui/x-date-pickers": "^7.12.0",
     "@mui/x-date-pickers-pro": "^7.12.0",
+    "@nextui-org/modal": "^2.2.5",
+    "@nextui-org/react": "^2.6.8",
     "@react-pdf/renderer": "^3.4.4",
+    "@reduxjs/toolkit": "^2.5.0",
     "axios": "^1.7.2",
     "chart.js": "^4.4.3",
     "date-fns": "^3.6.0",
@@ -35,7 +38,11 @@
     "react-icons": "^5.2.1",
     "react-leaflet": "^4.2.1",
     "react-modal": "^3.16.1",
-    "react-toastify": "^10.0.5"
+    "react-redux": "^9.2.0",
+    "react-toastify": "^10.0.5",
+    "redux": "^5.0.1",
+    "redux-persist": "^6.0.0",
+    "yesno-dialog": "^0.2.1"
   },
   "devDependencies": {
     "eslint": "^8",

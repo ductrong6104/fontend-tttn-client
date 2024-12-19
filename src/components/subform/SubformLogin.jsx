@@ -57,7 +57,7 @@ const SubformLogin = ({ isOpen, onClose, openSubformLogin, setSelectedNav }) => 
         notifyError("Tài khoản này không dành cho khách hàng");
       }
     });
-    
+    clearForm();
   };
 
   const handleChange = (e) => {
@@ -71,6 +71,14 @@ const SubformLogin = ({ isOpen, onClose, openSubformLogin, setSelectedNav }) => 
   const handleClickRegis = () => {
       onClose();
     setSubformRegisIsOpen(true);
+  }
+
+  const clearForm = () => {
+    setFormData({
+      "username": "",
+      "password": "",
+      "roleId": "3",
+    });
   }
   return (
     <>

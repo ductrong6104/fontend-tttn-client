@@ -1,6 +1,6 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { formatDateForDisplay } from "../../utils/formatDate";
-import LocalPrintshopIcon from '@mui/icons-material/LocalPrintshop';
+import LocalPrintshopIcon from "@mui/icons-material/LocalPrintshop";
 import {
   Table as MuiTable,
   TableBody,
@@ -24,8 +24,17 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import ButtonCustome from "../button/button";
+import { getAllElectricTypes } from "@/modules/electricTypes/service";
 
-const TableComponent = ({ data, columns, onEdit, onDelete, presentName, selected, setSelected }) => {
+const TableComponent = ({
+  data,
+  columns,
+  onEdit,
+  onDelete,
+  presentName,
+  selected,
+  setSelected,
+}) => {
   const [sortDirection, setSortDirection] = useState("asc");
   const [orderBy, setOrderBy] = useState(columns[0].id);
   const [page, setPage] = useState(0);
@@ -33,7 +42,6 @@ const TableComponent = ({ data, columns, onEdit, onDelete, presentName, selected
   const [searchTerms, setSearchTerms] = useState(
     columns.reduce((acc, col) => ({ ...acc, [col.id]: "" }), {})
   );
-  
 
   const handleRequestSort = (property) => {
     const isAscending = orderBy === property && sortDirection === "asc";
@@ -74,7 +82,10 @@ const TableComponent = ({ data, columns, onEdit, onDelete, presentName, selected
     return data.filter((row) =>
       columns.every(({ id }) =>
         row[id]
-          ? row[id].toString().toLowerCase().includes(searchTerms[id].toLowerCase())
+          ? row[id]
+              .toString()
+              .toLowerCase()
+              .includes(searchTerms[id].toLowerCase())
           : true
       )
     );
@@ -99,11 +110,33 @@ const TableComponent = ({ data, columns, onEdit, onDelete, presentName, selected
     { value: "false", label: "Chưa thông báo" },
   ];
 
+  const nameStatuses = [
+    { value: "Đang chờ duyệt", label: "Đang chờ duyệt" },
+    { value: "Từ chối", label: "Từ chối" },
+    { value: "Hoạt động", label: "Hoạt động" },
+    { value: "Chờ kết thúc", label: "Chờ kết thúc" },
+    { value: "Kết thúc", label: "Kết thúc" },
+  ];
+  const [electricTypes, setElectricTypes] = useState([]);
+  useEffect(() => {
+    if (presentName === "registration-form") {
+      getAllElectricTypes().then((response) => {
+        if (response.status === 200) {
+          setElectricTypes(
+            response.data.map((item) => ({
+              value: item.name,
+              label: item.name,
+            }))
+          );
+        }
+      });
+    }
+  }, [presentName]);
   return (
     <>
       <div className="flex flex-row">
-        {columns.map(({ id, label }) => (
-          (id === "powerMeterId" || id === "employeeIdAndFullName") ? (
+        {columns.map(({ id, label }) => {
+          const renderSearchInput = () => (
             <div className="mr-2" key={id}>
               <Typography>Tìm theo {label}</Typography>
               <TextField
@@ -116,19 +149,24 @@ const TableComponent = ({ data, columns, onEdit, onDelete, presentName, selected
                 sx={{ marginTop: 2 }}
               />
             </div>
-          ) : (id === "invoiced") && (
+          );
+
+          const renderStatusSelect = (options, placeholder) => (
             <div className="mr-2" key={id}>
-              <Typography sx={{ marginRight: 2 }}>Tìm theo {label}</Typography>
+   
               <FormControl sx={{ width: 200 }} margin="normal">
-                <InputLabel>Tìm theo trạng thái</InputLabel>
+                <InputLabel>{placeholder}</InputLabel>
                 <Select
                   name={id}
                   value={searchTerms[id]}
                   onChange={handleSearchChange(id)}
-                  label="Tìm theo trạng thái"
+                  label={placeholder}
                   required
                 >
-                  {invoiceds.map((option) => (
+                  <MenuItem value="">
+                    Tất cả
+                  </MenuItem>
+                  {options.map((option) => (
                     <MenuItem key={option.value} value={option.value}>
                       {option.label}
                     </MenuItem>
@@ -136,23 +174,42 @@ const TableComponent = ({ data, columns, onEdit, onDelete, presentName, selected
                 </Select>
               </FormControl>
             </div>
-          )
-        ))}
+          );
+
+          if (id === "powerMeterId" || id === "employeeIdAndFullName") {
+            return renderSearchInput();
+          }
+
+          if (id === "nameStatus") {
+            return renderStatusSelect(nameStatuses, "Tìm theo trạng thái");
+          }
+          if (id === "electricTypeName") {
+            return renderStatusSelect(electricTypes, "Tìm theo loại điện");
+          }
+
+          if (id === "invoiced") {
+            return renderStatusSelect(invoiceds, "Tìm theo trạng thái");
+          }
+
+          return null;
+        })}
       </div>
       <Paper className="overflow-x-auto mt-2">
         <TableContainer className="max-h-screen overflow-auto">
           <MuiTable>
             <TableHead>
               <TableRow>
-                {presentName == 'unpaid-bill' ? <TableCell padding="checkbox">
-                  <Checkbox
-                    checked={selected.length === paginatedData.length}
-                    onChange={handleSelectAllClick}
-                  />
-                </TableCell> : null}
-                
+                {presentName == "unpaid-bill" ? (
+                  <TableCell padding="checkbox">
+                    <Checkbox
+                      checked={selected.length === paginatedData.length}
+                      onChange={handleSelectAllClick}
+                    />
+                  </TableCell>
+                ) : null}
+
                 {columns.map(({ id, label }) => (
-                  <TableCell key={id} >
+                  <TableCell key={id}>
                     <TableSortLabel
                       active={orderBy === id}
                       direction={orderBy === id ? sortDirection : "asc"}
@@ -162,30 +219,51 @@ const TableComponent = ({ data, columns, onEdit, onDelete, presentName, selected
                     </TableSortLabel>
                   </TableCell>
                 ))}
-                {presentName === "electricityPrice" ? <TableCell/> : <TableCell>Thực hiện</TableCell>} 
+                {presentName === "electricityPrice" ? (
+                  <TableCell />
+                ) : (
+                  <TableCell>Thực hiện</TableCell>
+                )}
               </TableRow>
             </TableHead>
             <TableBody>
               {paginatedData.map((row) => (
                 <TableRow key={row.id}>
-                  {
-                    presentName == 'unpaid-bill' ? 
+                  {presentName == "unpaid-bill" ? (
                     <TableCell padding="checkbox">
-                    <Checkbox
-                      checked={selected.includes(row.id)}
-                      onChange={() => handleClick(row.id)}
-                    />
-                  </TableCell>: null
-                  }
-                  
+                      <Checkbox
+                        checked={selected.includes(row.id)}
+                        onChange={() => handleClick(row.id)}
+                      />
+                    </TableCell>
+                  ) : null}
+
                   {columns.map(({ id }) => (
                     <TableCell
                       style={{
                         color:
-                          id === "paymentStatus" || id === "disabled" || id === "resignation" || id === "invoiced"
-                            ? row.paymentStatus === true || row.disabled === false || row.resignation === false || row.invoiced === true
+                          id === "paymentStatus" ||
+                          id === "disabled" ||
+                          id === "resignation" ||
+                          id === "invoiced"
+                            ? row.paymentStatus === true ||
+                              row.disabled === false ||
+                              row.resignation === false ||
+                              row.invoiced === true
                               ? "green"
                               : "red"
+                            : id === "nameStatus"
+                            ? row.nameStatus === "Hoạt động"
+                              ? "green"
+                              : row.nameStatus === "Kết thúc"
+                              ? "gray"
+                              : row.nameStatus === "Từ chối"
+                              ? "red"
+                              : row.nameStatus === "Chờ kết thúc"
+                              ? "orange"
+                              : row.nameStatus === "Đang chờ duyệt"
+                              ? "blue"
+                              : "inherit" // Màu mặc định nếu không thuộc các trạng thái trên
                             : id === "gender"
                             ? row.gender === true
                               ? "pink"
@@ -237,35 +315,48 @@ const TableComponent = ({ data, columns, onEdit, onDelete, presentName, selected
                       <TableCell>
                         <IconButton onClick={() => onEdit(row)}>
                           <LocalPrintshopIcon />
-                          <Typography sx={{ color: "green" }}>Xem hóa đơn</Typography>
+                          <Typography sx={{ color: "green" }}>
+                            Xem hóa đơn
+                          </Typography>
                         </IconButton>
                       </TableCell>
                     ) : (
                       <TableCell>
                         <IconButton onClick={() => onEdit(row)}>
                           <LocalPrintshopIcon />
-                          <Typography sx={{ color: "red" }}>Xem thông báo</Typography>
+                          <Typography sx={{ color: "red" }}>
+                            Xem thông báo
+                          </Typography>
                         </IconButton>
                       </TableCell>
                     )
-                  ) : presentName === "unpaid-bill" ?
-                  row.paymentStatus === true ? (
-                    <TableCell>
-                      
-                    </TableCell>
+                  ) : presentName === "unpaid-bill" ? (
+                    row.paymentStatus === true ? (
+                      <TableCell></TableCell>
+                    ) : (
+                      <TableCell
+                        sx={{
+                          display: "flex",
+                          flexDirection: "column", // Sắp xếp các phần tử theo hàng
+                          justifyContent: "center", // Căn giữa các phần tử theo hàng
+                        }}
+                      >
+                        <ButtonCustome onClick={() => onEdit(row, 0)}>
+                          Thanh toán
+                        </ButtonCustome>
+                        <IconButton onClick={() => onEdit(row, 1)}>
+                          <LocalPrintshopIcon />
+                          <Typography sx={{ color: "red" }}>
+                            Xem thông báo
+                          </Typography>
+                        </IconButton>
+                      </TableCell>
+                    )
+                  ) : presentName === "registration-form" ? (
+                    <TableCell />
+                  ) : presentName === "electricityPrice" ? (
+                    <TableCell />
                   ) : (
-                    <TableCell sx={{
-                      display: "flex",
-                      flexDirection: "column", // Sắp xếp các phần tử theo hàng
-                      justifyContent: "center" // Căn giữa các phần tử theo hàng
-                    }}>
-                      <ButtonCustome onClick={() => onEdit(row, 0)}>Thanh toán</ButtonCustome>
-                      <IconButton onClick={() => onEdit(row, 1)}>
-                        <LocalPrintshopIcon />
-                        <Typography sx={{ color: "red" }}>Xem thông báo</Typography>
-                      </IconButton>
-                    </TableCell>
-                  ): presentName === "electricityPrice" ? <TableCell/> :(
                     <TableCell>
                       <IconButton onClick={() => onEdit(row)}>
                         <EditIcon />
@@ -281,7 +372,6 @@ const TableComponent = ({ data, columns, onEdit, onDelete, presentName, selected
                       </IconButton>
                     </TableCell>
                   )}
-                  
                 </TableRow>
               ))}
             </TableBody>

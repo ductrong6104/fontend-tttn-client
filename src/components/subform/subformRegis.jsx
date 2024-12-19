@@ -7,7 +7,7 @@ import ButtonCustome from "../button/button";
 import Divider from '../divider/divider';
 import { FaEyeSlash } from "react-icons/fa";
 import { LiaEyeSolid } from "react-icons/lia";
-import { customStyles } from "./customStyles";
+import {styleSubFrmRegis} from "./styleSubFrmRegis";
 import { createAccount } from "@/modules/accounts/service";
 import { checkEmailExists, checkPhoneExists, createClient, checkIdentityCardExists } from "@/modules/clients/service";
 import { useEffect } from "react";
@@ -59,6 +59,7 @@ const SubformRegis = ({ isOpen, onClose, openSubformLogin }) => {
       setCheckingEmail(true);
       try {
         setEmailExists(true);
+       
         if (!emailRegex.test(email)) {
           setEmailError('Email không hợp lệ, ví dụ: trong@gmail.com');
           return;
@@ -176,8 +177,8 @@ const SubformRegis = ({ isOpen, onClose, openSubformLogin }) => {
           createClient(newClient).then((res) => {
             if (res.status === 201) {
               notifySuccess("Đăng ký thông tin khách hàng thành công! Vui lòng đăng nhập.")
-              // onClose();
-              // openSubformLogin();
+              onClose();
+              openSubformLogin();
             }
             else if (res.status === 404) {
               notifyError("Đăng ký thông tin khách hàng thất bại! Kiểm tra lại thông tin")
@@ -189,10 +190,27 @@ const SubformRegis = ({ isOpen, onClose, openSubformLogin }) => {
           notifyError("Đăng ký thất bại! Tài khoản đã tồn tại.")
         }
       })
+      clearFormData();
     }
     
     // onClose(); // Đóng modal sau khi submit thành công
   };
+
+  const clearFormData = () => {
+    setFormData({
+      username: '',
+      password: '',
+      passwordAgain: '',
+      firstName: '',
+      lastName: '',
+      phone: '',
+      email: '',
+      identityCard: '',
+    });
+    // setEmailError('Vui lý nhập email');
+    // setPhoneError('Vui lý nhập số địện thoai');
+    // setIdentityCardError('Vui lòng nhập CCCD');
+  }
   const validateForm = () => {
     
     if (!nameRegex.test(formData.firstName)) {
@@ -246,7 +264,7 @@ const SubformRegis = ({ isOpen, onClose, openSubformLogin }) => {
     <Modal
       isOpen={isOpen}
       onRequestClose={onClose}
-      style={customStyles}
+      style={styleSubFrmRegis}
       contentLabel="Subform Modal"
       
     >

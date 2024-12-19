@@ -56,3 +56,13 @@ export const getContractStatusByClientId = async (clientId) => {
       throw error;
     } 
   }
+
+  export const getRegistrationFormByClientId = async (clientId) => {
+    try {
+      const response = await api.get(`/contracts/client/${clientId}/registration-form`);
+      return response.data;
+    } catch (error) {
+      console.error('Error checking check contract:', error);
+      throw error;
+    }
+  }

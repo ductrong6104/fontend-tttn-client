@@ -7,6 +7,7 @@ import FrmBillPayment from "../form/frmBillPayment";
 import FrmContractRegis from "../form/frmContractRegis";
 import FrmBillList from "../form/frmBillList";
 import { useRouter } from "next/navigation";
+import FrmApplicationFrm from "../form/frmApplicationFrm";
 
 export default function NavOnlineTrading({label}){
     const {formName} = useForm()
@@ -29,9 +30,10 @@ export default function NavOnlineTrading({label}){
                         <Link href="/client/onlineTrading/electricityService/billPayment" className="cursor-pointer">Thanh toán hóa đơn điện</Link>
                         <Link href="/client/onlineTrading/electricityService/billList" className="cursor-pointer">Danh sách hóa đơn</Link>
                     </ul>
-                    <ul>
+                    <ul className="flex flex-col">
                         <li className='font-bold'>Hợp đồng mua bán điện</li>
                         <Link href="/client/onlineTrading/electricityService/contractRegis" className="cursor-pointer">Đăng ký hợp đồng sử dụng điện</Link>
+                        <Link href="/client/onlineTrading/electricityService/applicationFrm" className="cursor-pointer">Danh sách đơn đăng ký</Link>
                     </ul>
                     <ul>
                         <li className='font-bold'>CÁC LOẠI YÊU CẦU KHÁC</li>
@@ -41,6 +43,7 @@ export default function NavOnlineTrading({label}){
                 {formName === "FrmContractRegis" && <FrmContractRegis />}
                 {formName === "FrmBillPayment" && <FrmBillPayment />}
                 {formName === "FrmBillList" && <FrmBillList />}
+                {formName === "FrmApplicationFrm" && <FrmApplicationFrm />}
                 {formName === "PageNotLoggedIn" && <PageNotLoggedIn />}
             </div>
         </div>
