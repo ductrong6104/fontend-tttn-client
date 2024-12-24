@@ -320,7 +320,7 @@ export default function FrmContractRegis() {
 
         <div className="flex justify-end items-center">
           <ButtonCustome className="bg-gray-400 text-white" type="submit">
-            Đăng 
+            Đăng ký
           </ButtonCustome>
           <FaAngleRight className="absolute text-white" />
         </div>

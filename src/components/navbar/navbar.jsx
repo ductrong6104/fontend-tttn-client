@@ -87,9 +87,10 @@ const Navbar = ({openSubForm, selectedNav, setSelectedNav} ) => {
                   <li className='text-sky-500 font-bold'>THANH TOÁN ONLINE</li>
                   <Link href="/client/onlineTrading/electricityService/billPayment" className="cursor-pointer">Thanh toán tiền điện</Link>
               </ul>
-              <ul>
+              <ul className="flex flex-col">
                   <li className='text-sky-500 font-bold'>HỢP ĐỒNG MUA BÁN ĐIỆN</li>
                   <Link href="/client/onlineTrading/electricityService/contractRegis" className="cursor-pointer">Đăng ký hồ sơ sử dụng điện</Link>
+                  <Link href="/client/onlineTrading/electricityService/applicationFrm" className="cursor-pointer">Danh sách đơn đăng ký</Link>
               </ul>
               <ul>
                   <li className='text-sky-500 font-bold'>CÁC LOẠI YÊU CẦU KHÁC</li>

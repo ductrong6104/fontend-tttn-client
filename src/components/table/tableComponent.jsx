@@ -25,7 +25,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import ButtonCustome from "../button/button";
 import { getAllElectricTypes } from "@/modules/electricTypes/service";
-
+import { RequestStatus } from "@/types/enums/requestStatus";
 const TableComponent = ({
   data,
   columns,
@@ -119,7 +119,7 @@ const TableComponent = ({
   ];
   const [electricTypes, setElectricTypes] = useState([]);
   useEffect(() => {
-    if (presentName === "registration-form") {
+    if (presentName === "registration-form" || presentName === "electricityPrice") {
       getAllElectricTypes().then((response) => {
         if (response.status === 200) {
           setElectricTypes(
@@ -153,7 +153,6 @@ const TableComponent = ({
 
           const renderStatusSelect = (options, placeholder) => (
             <div className="mr-2" key={id}>
-   
               <FormControl sx={{ width: 200 }} margin="normal">
                 <InputLabel>{placeholder}</InputLabel>
                 <Select
@@ -163,9 +162,7 @@ const TableComponent = ({
                   label={placeholder}
                   required
                 >
-                  <MenuItem value="">
-                    Tất cả
-                  </MenuItem>
+                  <MenuItem value="">Tất cả</MenuItem>
                   {options.map((option) => (
                     <MenuItem key={option.value} value={option.value}>
                       {option.label}
@@ -353,7 +350,27 @@ const TableComponent = ({
                       </TableCell>
                     )
                   ) : presentName === "registration-form" ? (
-                    <TableCell />
+                    row.nameStatus === "Từ chối" ? (
+                      <TableCell>
+                        <ButtonCustome onClick={() => onEdit(row, RequestStatus.BoSung)}>
+                          Bổ sung
+                        </ButtonCustome>
+                      </TableCell>
+                    ) : row.nameStatus === "Đang chờ duyệt" ? (
+                      <TableCell>
+                        <ButtonCustome onClick={() => onEdit(row, RequestStatus.HuyYeuCau)}>
+                          Hủy yêu cầu
+                        </ButtonCustome>
+                      </TableCell>
+                    ) : row.nameStatus === "Hoạt động" || row.nameStatus === "Chờ kết thúc"? (
+                      <TableCell>
+                        <ButtonCustome onClick={() => onEdit(row, RequestStatus.KetThuc)}>
+                          Kết thúc hợp đồng
+                        </ButtonCustome>
+                      </TableCell>
+                    ) : (
+                      <TableCell/>
+                    )
                   ) : presentName === "electricityPrice" ? (
                     <TableCell />
                   ) : (

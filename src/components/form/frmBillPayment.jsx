@@ -64,7 +64,7 @@ export default function FrmBillPayment() {
     } else {
       setDialogConfig({
         title: "Thanh toán hóa đơn",
-        bodyText: `Bạn có muốn thanh toán hóa đơn với số tiền: ${bill.id} ?`,
+        bodyText: `Bạn có muốn thanh toán hóa đơn với số tiền: ${bill.totalAmount} ?`,
         onYes: () => {
           updateStatusBill(bill.id, { status: true }).then((res) => {
             if (res.status === 200) {

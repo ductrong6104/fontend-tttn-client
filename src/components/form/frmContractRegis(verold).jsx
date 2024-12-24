@@ -41,7 +41,6 @@ export default function FrmContractRegisVersionOld() {
     electricTypeId: "",
     startDate: "",
   });
-  const [electricTypes, setElectricTypes] = useState([]);
   const [electricTypeIdSelected, setElectricTypeIdSelected] = useState(null);
   const [contractExists, setContractExists] = useState(false);
   const [isReadOnly, setIsReadOnly] = useState(true);
@@ -50,6 +49,7 @@ export default function FrmContractRegisVersionOld() {
   const [reload, setReload] = useState(false);
   const [contractIdExists, setContractIdExists] = useState();
   const [contractStatus, setContractStatus] = useState({});
+  const [electricTypes, setElectricTypes] = useState([]);
   const handleSelect = (value) => {
     console.log("Selected value:", value);
     setFormData((prevFormData) => ({
